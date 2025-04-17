@@ -3,7 +3,6 @@ package sys_facturation.com.implement;
 import org.hibernate.sql.ast.tree.expression.Collation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sys_facturation.com.entity.Categories;
 import sys_facturation.com.repository.CategorieDao;
 import sys_facturation.com.service.CategoriesService;
 

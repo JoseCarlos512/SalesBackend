@@ -1,7 +1,6 @@
 package sys_facturation.com.service;
 
 import org.hibernate.sql.ast.tree.expression.Collation;
-import sys_facturation.com.entity.Categories;
 
 import java.util.Collection;
 
