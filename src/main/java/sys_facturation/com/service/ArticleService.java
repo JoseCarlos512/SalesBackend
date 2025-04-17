@@ -1,5 +1,6 @@
 package sys_facturation.com.service;
 
+import sys_facturation.com.entity.Articles;
 import java.util.Collection;
 
 public interface ArticleService {
