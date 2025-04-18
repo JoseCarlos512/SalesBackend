@@ -13,6 +13,7 @@ public class ArticleImplements implements ArticleService {
     @Autowired
     ArticleDao articleRespository;
 
+
     @Override
     public void insert(Articles articles) {
         articleRespository.save(articles);

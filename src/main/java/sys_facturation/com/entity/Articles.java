@@ -16,43 +16,48 @@ public class Articles implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
-    @Column(nullable = false, length = 30)
-    private String name_article;
+    @Column(length = 100, nullable = false)
+    private String nombre;
+
+    @Column(length = 256)
+    private String descripcion;
 
     @Column(length = 50)
-    private String description;
+    private String codigo;
 
-    @Column(length = 15)
-    private String code_article;
+    @Column(length = 50, nullable = false)
+    private Double precio_venta;
 
-    @Column(nullable = false, length = 10)
-    private Double price;
-
-    @Column(length = 10)
+    @Column(length = 11)
     private int stock;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm")
     @Column(nullable = false)
     private LocalDateTime create_at = LocalDateTime.now(); // Fecha específica para este registro.
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm")
+    @Column(nullable = false)
+    private LocalDateTime update_at = LocalDateTime.now(); // Fecha específica para este registro.
+
     @Column(nullable = false, length = 1)
     private int status_article = 1;
 
     @ManyToOne
-    @JoinColumn(nullable = false, name = "categories_id")
+    @JoinColumn(nullable = false, name = "id_categories")
     Categories categories;
 
     public Articles() {
     }
 
-    public Articles(Long id, String name_article, String description, String code_article, Double price, int stock, LocalDateTime create_at, int status_article, Categories categories) {
+    public Articles(Long id, String nombre, String descripcion, String codigo, Double precio_venta, int stock, LocalDateTime create_at, LocalDateTime update_at, int status_article, Categories categories) {
         this.Id = id;
-        this.name_article = name_article;
-        this.description = description;
-        this.code_article = code_article;
-        this.price = price;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.codigo = codigo;
+        this.precio_venta = precio_venta;
         this.stock = stock;
         this.create_at = create_at;
+        this.update_at = update_at;
         this.status_article = status_article;
         this.categories = categories;
     }
@@ -65,36 +70,36 @@ public class Articles implements Serializable {
         Id = id;
     }
 
-    public String getName_article() {
-        return name_article;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setName_article(String name_article) {
-        this.name_article = name_article;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
-    public String getCode_article() {
-        return code_article;
+    public String getCodigo() {
+        return codigo;
     }
 
-    public void setCode_article(String code_article) {
-        this.code_article = code_article;
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
-    public Double getPrice() {
-        return price;
+    public Double getPrecio_venta() {
+        return precio_venta;
     }
 
-    public void setPrice(Double price) {
-        this.price = price;
+    public void setPrecio_venta(Double precio_venta) {
+        this.precio_venta = precio_venta;
     }
 
     public int getStock() {
@@ -111,6 +116,14 @@ public class Articles implements Serializable {
 
     public void setCreate_at(LocalDateTime create_at) {
         this.create_at = create_at;
+    }
+
+    public LocalDateTime getUpdate_at() {
+        return update_at;
+    }
+
+    public void setUpdate_at(LocalDateTime update_at) {
+        this.update_at = update_at;
     }
 
     public int getStatus_article() {
