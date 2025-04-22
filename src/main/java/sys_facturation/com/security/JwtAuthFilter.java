@@ -31,11 +31,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         // ⛔️ Ignorar rutas públicas (Swagger y Auth)
-        if (path.startsWith("/api/auth") ||
-                path.startsWith("/api/swagger-ui") ||
-                path.startsWith("/api/v3/api-docs") ||
-                path.startsWith("/api/swagger-resources") ||
-                path.startsWith("/api/webjars")) {
+        if (path.contains("/auth") ||
+                path.contains("/swagger-ui") ||
+                path.contains("/v3/api-docs") ||
+                path.contains("/swagger-resources") ||
+                path.contains("/webjars")) {
 
             filterChain.doFilter(request, response);
             return;
