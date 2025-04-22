@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import sys_facturation.com.entity.Provider;
-import sys_facturation.com.repository.ProviderDao;
+import sys_facturation.com.service.ProviderService;
 
 
 @RestController
@@ -23,17 +23,17 @@ import sys_facturation.com.repository.ProviderDao;
 public class ProviderController {
     
     @Autowired
-	private ProviderDao proovDao;
+	private ProviderService providerService;
 
     @GetMapping("/List")
     public ResponseEntity<List<Provider>> ListProvider() {
-        List<Provider> proveedoresList = proovDao.ListProvider();
+        List<Provider> proveedoresList = providerService.ListProvider();
         return ResponseEntity.ok(proveedoresList);
     }
 
     @GetMapping("/ById/{id}")
     public ResponseEntity<Provider> ProviderById(@PathVariable Long id) {
-        Provider prov = proovDao.ProviderById(id);
+        Provider prov = providerService.ProviderById(id);
         if (prov != null) {
             return ResponseEntity.ok(prov);
         } else {
@@ -43,29 +43,29 @@ public class ProviderController {
 
     @PostMapping("/Register")
     public ResponseEntity<Provider> RegisterProvider(@RequestBody Provider proveedor) {
-        proovDao.RegisterProvider(proveedor);
+        providerService.RegisterProvider(proveedor);
         return new ResponseEntity<>(proveedor, HttpStatus.CREATED);
     }
 
     @PutMapping("/Edit/{id}")
     public ResponseEntity<Provider> EditProvider(@PathVariable(value="id") Long id, @RequestBody Provider proveedorDetails) {
-        Provider proveedor = proovDao.ProviderById(id);
+        Provider proveedor = providerService.ProviderById(id);
         if (proveedor == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         proveedor.setContacto(proveedorDetails.getContacto());
         // Aquí puedes agregar otros campos a actualizar
-        proovDao.RegisterProvider(proveedor);
+        providerService.RegisterProvider(proveedor);
         return new ResponseEntity<>(proveedor, HttpStatus.OK);
     }
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable(value="id") Long id) {
-        Provider proveedor = proovDao.ProviderById(id);
+        Provider proveedor = providerService.ProviderById(id);
         if (proveedor == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        proovDao.RemoveProvider(id);
+        providerService.RemoveProvider(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
