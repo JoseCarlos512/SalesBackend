@@ -10,6 +10,10 @@ import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -27,76 +31,56 @@ public class Income implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "idproveedor", nullable = false)
     private Long idproveedor;
-
-    @Column(name = "idusuario", nullable = false)
     private Long idusuario;
-    
-    @Column(name = "tipo_comprobante", nullable = false)
-    private String tipo_comprobante;
-
-    @Column(name = "serie_comprobante")
-    private String serie_comprobante;
-
-    @Column(name = "num_comprobante")
-    private String num_comprobante;
-
-    @Column(name = "impuesto")
+    private String tipoComprobante;
+    private String serieComprobante;
+    private String numComprobante;
+    @Column(precision = 10, scale = 2)
     private BigDecimal impuesto;
-
-    @Column(name = "total")
     private BigDecimal total;
+    private String estado;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private LocalDateTime fechaHora;
 
-    @Column(name = "estado")
-    private String estado = "ACTIVO";
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private LocalDateTime createdAt;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    @Column(name = "fecha_hora", nullable = false)
-    private LocalDateTime fecha_hora;
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    @Column(name = "created_at")
-    private LocalDateTime created_at;
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    @Column(name = "updated_at")
-    private LocalDateTime updated_at;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "income", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<IncomeDetail> detalles = new ArrayList<>();
+    private List<IncomeDetail> detalles;
 
-    //  @PrePersist
-    // protected void onCreate() {
-    //     if (this.fecha_hora == null) {
-    //         this.fecha_hora = LocalDateTime.now();
-    //     }
-    //     if (this.created_at == null) {
-    //         this.created_at = LocalDateTime.now();
-    //     }
-    //     this.updated_at = LocalDateTime.now();
-    // }
+   
 
-    public Income() {
+    public List<IncomeDetail> getDetalles() {
+        return detalles;
     }
 
-    public Income(Long id, Long idproveedor, Long idusuario, String tipo_comprobante, String serie_comprobante,
-            String num_comprobante, LocalDateTime fecha_hora, BigDecimal impuesto, BigDecimal total, String estado,
-            LocalDateTime created_at, LocalDateTime updated_at, List<IncomeDetail> detalles) {
+    public void setDetalles(List<IncomeDetail> detalles) {
+        this.detalles = detalles;
+    }
+
+    public Income() {
+
+    }
+
+    public Income(Long id, Long idproveedor, Long idusuario, String tipoComprobante, String serieComprobante,
+            String numComprobante, BigDecimal impuesto, BigDecimal total, String estado, LocalDateTime fechaHora,
+            LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.idproveedor = idproveedor;
         this.idusuario = idusuario;
-        this.tipo_comprobante = tipo_comprobante;
-        this.serie_comprobante = serie_comprobante;
-        this.num_comprobante = num_comprobante;
-        this.fecha_hora = fecha_hora;
+        this.tipoComprobante = tipoComprobante;
+        this.serieComprobante = serieComprobante;
+        this.numComprobante = numComprobante;
         this.impuesto = impuesto;
         this.total = total;
         this.estado = estado;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
-        this.detalles = detalles;
+        this.fechaHora = fechaHora;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public Long getId() {
@@ -123,36 +107,28 @@ public class Income implements Serializable {
         this.idusuario = idusuario;
     }
 
-    public String getTipo_comprobante() {
-        return tipo_comprobante;
+    public String getTipoComprobante() {
+        return tipoComprobante;
     }
 
-    public void setTipo_comprobante(String tipo_comprobante) {
-        this.tipo_comprobante = tipo_comprobante;
+    public void setTipoComprobante(String tipoComprobante) {
+        this.tipoComprobante = tipoComprobante;
     }
 
-    public String getSerie_comprobante() {
-        return serie_comprobante;
+    public String getSerieComprobante() {
+        return serieComprobante;
     }
 
-    public void setSerie_comprobante(String serie_comprobante) {
-        this.serie_comprobante = serie_comprobante;
+    public void setSerieComprobante(String serieComprobante) {
+        this.serieComprobante = serieComprobante;
     }
 
-    public String getNum_comprobante() {
-        return num_comprobante;
+    public String getNumComprobante() {
+        return numComprobante;
     }
 
-    public void setNum_comprobante(String num_comprobante) {
-        this.num_comprobante = num_comprobante;
-    }
-
-    public LocalDateTime getFecha_hora() {
-        return fecha_hora;
-    }
-
-    public void setFecha_hora(LocalDateTime fecha_hora) {
-        this.fecha_hora = fecha_hora;
+    public void setNumComprobante(String numComprobante) {
+        this.numComprobante = numComprobante;
     }
 
     public BigDecimal getImpuesto() {
@@ -179,28 +155,28 @@ public class Income implements Serializable {
         this.estado = estado;
     }
 
-    public LocalDateTime getCreated_at() {
-        return created_at;
+    public LocalDateTime getFechaHora() {
+        return fechaHora;
     }
 
-    public void setCreated_at(LocalDateTime created_at) {
-        this.created_at = created_at;
+    public void setFechaHora(LocalDateTime fechaHora) {
+        this.fechaHora = fechaHora;
     }
 
-    public LocalDateTime getUpdated_at() {
-        return updated_at;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setUpdated_at(LocalDateTime updated_at) {
-        this.updated_at = updated_at;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public List<IncomeDetail> getDetalles() {
-        return detalles;
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setDetalles(List<IncomeDetail> detalles) {
-        this.detalles = detalles;
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
 }

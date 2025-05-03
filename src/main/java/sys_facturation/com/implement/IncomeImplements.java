@@ -9,10 +9,13 @@ import org.springframework.stereotype.Repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import sys_facturation.com.dto.IncomeDTO;
 import sys_facturation.com.entity.Income;
 import sys_facturation.com.entity.IncomeDetail;
+import sys_facturation.com.entity.User;
 import sys_facturation.com.repository.IncomeDao;
 import sys_facturation.com.service.IncomeService;
+import sys_facturation.com.util.MapperUtils;
 
 @Repository
 public class IncomeImplements implements IncomeService {
@@ -34,12 +37,11 @@ public class IncomeImplements implements IncomeService {
 
     @Override
     @Transactional
-    public Income save(Income income) {
-        for (IncomeDetail detalle : income.getDetalles()) {
-            detalle.setIncome(income);
-        }
-        System.out.println(">>>>> Fecha recibida: " + income.getFecha_hora());
-        return incomeDao.save(income);
+    public IncomeDTO save(Income income) {
+        System.out.println(">>>>> Fecha recibida: " + income.getFechaHora());
+        System.out.println(">>>>> ESTADO RECIBIDO: " + income.getEstado());
+        Income saved = incomeDao.save(income);
+        return MapperUtils.toIncomeDTO(saved);
     }
 
     @Override

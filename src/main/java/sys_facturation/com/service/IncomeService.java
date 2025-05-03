@@ -3,6 +3,7 @@ package sys_facturation.com.service;
 import java.util.List;
 import java.util.Optional;
 
+import sys_facturation.com.dto.IncomeDTO;
 import sys_facturation.com.entity.Income;
 
 public interface IncomeService {
@@ -10,7 +11,7 @@ public interface IncomeService {
 
     public Optional<Income> findById(Long id);
 
-    public Income save(Income ingreso);
+    public IncomeDTO save(Income ingreso);
     
     public void deleteById(Long id);
 }

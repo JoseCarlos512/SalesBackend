@@ -22,15 +22,12 @@ public class IncomeDetail implements Serializable {
     @ManyToOne
     @JoinColumn(name = "idingreso")
     private Income income;
-
-    @Column(name = "idarticulo")
     private Long idarticulo;
-
-    @Column(name = "cantidad")
     private Integer cantidad;
-
-    @Column(name = "precio")
     private BigDecimal precio;
+
+    public IncomeDetail() {
+    }
 
     public IncomeDetail(Long id, Income income, Long idarticulo, Integer cantidad, BigDecimal precio) {
         this.id = id;

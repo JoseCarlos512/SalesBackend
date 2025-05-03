@@ -13,58 +13,142 @@ import sys_facturation.com.entity.Income;
 import sys_facturation.com.entity.IncomeDetail;
 
 public class IncomeDTO {
-    private Long idproveedor;
+    //private Long id;
+    public Long idproveedor;
+    public Long idusuario;
+    public String tipoComprobante;
+    public String serieComprobante;
+    public String numComprobante;
+    public BigDecimal impuesto;
+    public BigDecimal total;
+    public String estado;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    public LocalDateTime fechaHora;
 
-    private Long idusuario;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    public LocalDateTime createdAt;
 
-    private String tipo_comprobante;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    public LocalDateTime updatedAt;
 
-    private String serie_comprobante;
-    private String num_comprobante;
-    private BigDecimal impuesto;
-    private BigDecimal total;
-    private String estado = "ACTIVO";
+    // @Valid
+    // @NotEmpty(message = "Debe incluir al menos un detalle")
+     public List<IncomeDetailDTO> detalles;
 
-    @NotNull
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime fecha_hora;
-
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime created_at;
-
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime updated_at;
-
-    @Valid
-    @NotEmpty(message = "Debe incluir al menos un detalle")
-    private List<IncomeDetailDTO> detalles;
-
+    public IncomeDTO() {
+    }
 
     public Income toEntity() {
         Income income = new Income();
         income.setIdproveedor(this.idproveedor);
         income.setIdusuario(this.idusuario);
-        income.setTipo_comprobante(this.tipo_comprobante);
-        income.setSerie_comprobante(this.serie_comprobante);
-        income.setNum_comprobante(this.num_comprobante);
+        income.setTipoComprobante(this.tipoComprobante);
+        income.setSerieComprobante(this.serieComprobante);
+        income.setNumComprobante(this.numComprobante);
         income.setImpuesto(this.impuesto);
         income.setTotal(this.total);
         income.setEstado(this.estado);
-        income.setFecha_hora(this.fecha_hora);
-        income.setCreated_at(this.created_at != null ? this.created_at : LocalDateTime.now());
-        income.setUpdated_at(LocalDateTime.now());
+        income.setFechaHora(this.fechaHora);
+        income.setCreatedAt(this.createdAt != null ? this.createdAt : LocalDateTime.now());
+        income.setUpdatedAt(LocalDateTime.now());
 
         if (this.detalles != null) {
-            List<IncomeDetail> detailsEntities = this.detalles.stream()
-                .map(dto -> {
-                    IncomeDetail detail = dto.toEntity();
-                    detail.setIncome(income);
-                    return detail;
-                })
+            List<IncomeDetail> detallesEntity = this.detalles.stream()
+                .map(d -> d.toEntity(income))
                 .toList();
-            income.setDetalles(detailsEntities);
+            income.setDetalles(detallesEntity);
         }
 
         return income;
     }
+
+    public Long getIdproveedor() {
+        return idproveedor;
+    }
+
+    public void setIdproveedor(Long idproveedor) {
+        this.idproveedor = idproveedor;
+    }
+
+    public Long getIdusuario() {
+        return idusuario;
+    }
+
+    public void setIdusuario(Long idusuario) {
+        this.idusuario = idusuario;
+    }
+
+    public String getTipoComprobante() {
+        return tipoComprobante;
+    }
+
+    public void setTipoComprobante(String tipo_comprobante) {
+        this.tipoComprobante = tipo_comprobante;
+    }
+
+    public String getSerieComprobante() {
+        return serieComprobante;
+    }
+
+    public void setSerieComprobante(String serie_comprobante) {
+        this.serieComprobante = serie_comprobante;
+    }
+
+    public String getNumComprobante() {
+        return numComprobante;
+    }
+
+    public void setNumComprobante(String num_comprobante) {
+        this.numComprobante = num_comprobante;
+    }
+
+    public BigDecimal getImpuesto() {
+        return impuesto;
+    }
+
+    public void setImpuesto(BigDecimal impuesto) {
+        this.impuesto = impuesto;
+    }
+
+    public BigDecimal getTotal() {
+        return total;
+    }
+
+    public void setTotal(BigDecimal total) {
+        this.total = total;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public LocalDateTime getFechaHora() {
+        return fechaHora;
+    }
+
+    public void setFechaHora(LocalDateTime fechaHora) {
+        this.fechaHora = fechaHora;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    
 }

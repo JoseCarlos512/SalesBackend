@@ -1,6 +1,7 @@
 package sys_facturation.com.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +11,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import sys_facturation.com.dto.IncomeDTO;
 import sys_facturation.com.entity.Income;
 import sys_facturation.com.service.IncomeService;
 
@@ -35,9 +37,19 @@ public class IncomeController {
     }
 
     @PostMapping("/Register")
-    public Income create(@RequestBody Income income) {
-        System.out.println("Income recibido: " + income.getFecha_hora());
-        return incomeService.save(income);
+    public ResponseEntity<IncomeDTO> create(@RequestBody IncomeDTO dto) {
+        Income income = dto.toEntity();
+        IncomeDTO saved = incomeService.save(income);
+        return new ResponseEntity<>(saved, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/test")
+    public ResponseEntity<IncomeDTO> test(@RequestBody Map<String, Object> request) {
+        System.out.println("Request map: " + request);
+        IncomeDTO dto = new IncomeDTO();
+        dto.setEstado((String) request.get("estado"));
+        // Asigna otros campos...
+        return ResponseEntity.ok(dto);
     }
 
     @DeleteMapping("/Remove/{id}")
