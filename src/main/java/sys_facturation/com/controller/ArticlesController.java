@@ -12,6 +12,8 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/articles")
+@CrossOrigin(origins = {"*"})
+
 public class ArticlesController {
 
     @Autowired
@@ -66,6 +68,4 @@ public class ArticlesController {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
-
-
 }
