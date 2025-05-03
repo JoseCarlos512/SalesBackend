@@ -8,10 +8,10 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import sys_facturation.com.entity.Provider;
-import sys_facturation.com.repository.ProviderDao;
+import sys_facturation.com.service.ProviderService;
 
 @Repository
-public class ProviderServiceImpl implements ProviderDao{
+public class ProviderServiceImpl implements ProviderService{
 
     @PersistenceContext
     private EntityManager em;

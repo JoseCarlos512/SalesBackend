@@ -8,10 +8,10 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import sys_facturation.com.entity.Person;
-import sys_facturation.com.repository.PersonDao;
+import sys_facturation.com.service.PersonService;
 
 @Repository
-public class PersonServiceImpl implements PersonDao{
+public class PersonServiceImpl implements PersonService{
 
     @PersistenceContext
     private EntityManager em;
