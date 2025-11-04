@@ -86,7 +86,7 @@
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>mssql-jdbc</artifactId>
-			<version>10.2.0.jre8</version> <!-- Verifica que sea la última versión disponible -->
+			<version>10.2.4.jre8</version> <!-- Verifica que sea la última versión disponible -->
 		</dependency>
 
 		<dependency>
