@@ -1,70 +1,67 @@
 package sys_facturation.com.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import sys_facturation.com.entity.Person;
 import sys_facturation.com.service.PersonService;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/person")
+@RequestMapping("/persons")
 public class PersonController {
 
     @Autowired
-	private PersonService personaService;
+    private PersonService personService;
 
-    @GetMapping("/List")
-    public ResponseEntity<List<Person>> ListPerson() {
-        List<Person> personasList = personaService.ListPerson();
-        return new ResponseEntity<>(personasList, HttpStatus.OK);
+    @GetMapping
+    public ResponseEntity<List<Person>> listAll() {
+        List<Person> list = personService.ListPerson();
+        if (list.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(list);
     }
-    
-    @GetMapping("/ById/{id}")
-    public ResponseEntity<Person> PersonById(@PathVariable Long id) {
-        Person person = personaService.PersonById(id);
-        if (person != null) {
-            return ResponseEntity.ok(person);
-        } else {
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Person> getById(@PathVariable Long id) {
+        Person person = personService.PersonById(id);
+        if (person == null) {
             return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok(person);
     }
 
-    @PostMapping("/Register")
-    public ResponseEntity<Person> RegisterPerson(@RequestBody Person persona) {
-        personaService.RegisterPerson(persona);
-        return new ResponseEntity<>(persona, HttpStatus.CREATED);
+    @PostMapping
+    public ResponseEntity<Person> create(@RequestBody Person person) {
+        Person saved = personService.RegisterPerson(person);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
-    @PutMapping("/Edit/{id}")
-    public ResponseEntity<Person> EditPerson(@PathVariable(value="id") Long id, @RequestBody Person personaDetails) {
-        Person persona = personaService.PersonById(id);
-        if (persona == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @PutMapping("/{id}")
+    public ResponseEntity<Person> update(@PathVariable Long id, @RequestBody Person personDetails) {
+        Person person = personService.PersonById(id);
+        if (person == null) {
+            return ResponseEntity.notFound().build();
         }
-        persona.setNombre(personaDetails.getNombre());
-        // Aquí puedes agregar otros campos a actualizar
-        personaService.RegisterPerson(persona);
-        return new ResponseEntity<>(persona, HttpStatus.OK);
+        person.setNombre(personDetails.getNombre());
+        person.setTipo_documento(personDetails.getTipo_documento());
+        person.setNum_documento(personDetails.getNum_documento());
+        person.setDireccion(personDetails.getDireccion());
+        person.setTelefono(personDetails.getTelefono());
+        person.setEmail(personDetails.getEmail());
+        Person updated = personService.RegisterPerson(person);
+        return ResponseEntity.ok(updated);
     }
 
-    @DeleteMapping("/Remove/{id}")
-    public ResponseEntity<Void> RemovePerson(@PathVariable(value="id") Long id) {
-        Person persona = personaService.PersonById(id);
-        if (persona == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        if (personService.PersonById(id) == null) {
+            return ResponseEntity.notFound().build();
         }
-        personaService.RemovePerson(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        personService.RemovePerson(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,59 +1,47 @@
 package sys_facturation.com.implement;
 
-import java.util.List;
-
-import org.springframework.stereotype.Repository;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sys_facturation.com.entity.Provider;
+import sys_facturation.com.repository.ProviderDao;
 import sys_facturation.com.service.ProviderService;
 
-@Repository
-public class ProviderServiceImpl implements ProviderService{
+import java.util.List;
 
-    @PersistenceContext
-    private EntityManager em;
+@Service
+public class ProviderServiceImpl implements ProviderService {
+
+    @Autowired
+    private ProviderDao providerDao;
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Provider> ListProvider() {
-        return em.createQuery("FROM Provider", Provider.class).getResultList();
+        return providerDao.findAll();
     }
 
     @Override
     @Transactional
     public Provider RegisterProvider(Provider prov) {
-        if (prov.getId() == null) {
-            em.persist(prov);
-        } else {
-            em.merge(prov);
-        }
-        return prov;
+        return providerDao.save(prov);
     }
 
     @Override
     @Transactional
     public Provider EditProvider(Provider prov) {
-        return em.merge(prov);
+        return providerDao.save(prov);
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Provider ProviderById(Long id) {
-        return em.find(Provider.class, id);
+        return providerDao.findById(id).orElse(null);
     }
 
     @Override
     @Transactional
     public void RemoveProvider(Long id) {
-        Provider prov = ProviderById(id);
-        if (prov != null) {
-            em.remove(prov);
-        }
+        providerDao.deleteById(id);
     }
-
-   
-    
 }

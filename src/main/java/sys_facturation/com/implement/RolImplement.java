@@ -10,55 +10,55 @@ import sys_facturation.com.service.RolService;
 import sys_facturation.com.util.MapperUtils;
 
 import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class RolImplement implements RolService {
 
     @Autowired
-    RolDao rolRepository;
+    private RolDao rolRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<RolDTO> findAll() {
-        return ((Collection<Rol>) rolRepository.findAll()).stream()
+        return rolRepository.findAll().stream()
                 .map(MapperUtils::toRolDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public RolDTO findById(Long Id) {
-        Rol rol = rolRepository.findById(Id).orElse(null);
-        return rol != null ? MapperUtils.toRolDTO(rol) : null;
+    @Transactional(readOnly = true)
+    public RolDTO findById(Long id) {
+        return rolRepository.findById(id)
+                .map(MapperUtils::toRolDTO)
+                .orElse(null);
     }
 
     @Override
     @Transactional
     public RolDTO insert(Rol rol) {
-        Rol saved = rolRepository.save(rol);
-        return MapperUtils.toRolDTO(saved);
+        return MapperUtils.toRolDTO(rolRepository.save(rol));
     }
 
     @Override
     @Transactional
     public RolDTO update(Rol rol) {
-        Rol updated = rolRepository.save(rol);
-        return MapperUtils.toRolDTO(updated);
+        return MapperUtils.toRolDTO(rolRepository.save(rol));
     }
 
     @Override
     @Transactional
-    public boolean deleteById(Long Id) {
-        if (rolRepository.existsById(Id)){
-            rolRepository.deleteById(Id);
+    public boolean deleteById(Long id) {
+        if (rolRepository.existsById(id)) {
+            rolRepository.deleteById(id);
             return true;
         }
         return false;
     }
 
     @Override
-    public boolean existsById(Long Id) {
-        return rolRepository.existsById(Id);
+    @Transactional(readOnly = true)
+    public boolean existsById(Long id) {
+        return rolRepository.existsById(id);
     }
 }

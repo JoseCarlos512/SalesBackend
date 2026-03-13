@@ -7,59 +7,57 @@ import org.springframework.web.bind.annotation.*;
 import sys_facturation.com.dto.UserDTO;
 import sys_facturation.com.entity.User;
 import sys_facturation.com.service.UserService;
-import sys_facturation.com.util.MapperUtils;
 
 import java.util.Collection;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/users")
 public class UserController {
+
     @Autowired
-    UserService userService;
-    @GetMapping("/user")
-    public ResponseEntity<?> List() {
+    private UserService userService;
+
+    @GetMapping
+    public ResponseEntity<Collection<UserDTO>> listAll() {
         Collection<UserDTO> users = userService.findAll();
         if (users.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(users);
     }
-    @GetMapping("/user/{id}")
-    public ResponseEntity<UserDTO> FindById(@PathVariable Long id) {
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> getById(@PathVariable Long id) {
         UserDTO user = userService.findById(id);
         if (user == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
-
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    }
-    @PostMapping("/user")
-    public ResponseEntity<UserDTO> Insert(@RequestBody User user) {
-        if (user == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        UserDTO createdUser = userService.insert(user);
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        return ResponseEntity.ok(user);
     }
 
-    @PutMapping("/user/{id}")
-    public ResponseEntity<UserDTO> Update(@PathVariable(value="id") Long id, @RequestBody User user) {
-        if (user == null || id == null || !id.equals(user.getId())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        UserDTO updatedUser = userService.update(user);
-        if (updatedUser == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    @PostMapping
+    public ResponseEntity<UserDTO> create(@RequestBody User user) {
+        UserDTO created = userService.insert(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    @DeleteMapping("/user/{id}")
-    public ResponseEntity<Void> Delete(@PathVariable(value="id") Long id) {
-        boolean deleted = userService.deleteById(id);
-        if (!deleted) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody User user) {
+        if (!id.equals(user.getId())) {
+            return ResponseEntity.badRequest().build();
         }
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        UserDTO updated = userService.update(user);
+        if (updated == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        if (!userService.deleteById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,13 +1,11 @@
 package sys_facturation.com.service;
 
 import sys_facturation.com.entity.Articles;
-import java.util.Collection;
+import java.util.List;
 
 public interface ArticleService {
-
-    abstract void insert(Articles articles);
-    abstract void update(Articles articles);
-    abstract Articles findById(Long Id);
-    Collection<Articles> findAll();
-
+    void insert(Articles articles);
+    void update(Articles articles);
+    Articles findById(Long id);
+    List<Articles> findAll();
 }

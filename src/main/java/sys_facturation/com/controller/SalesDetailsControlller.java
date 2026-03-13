@@ -6,97 +6,54 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sys_facturation.com.entity.SalesDetails;
 import sys_facturation.com.service.SalesDetailsService;
-import java.util.Collection;
-import java.util.HashMap;
+
+import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/sales_details")
-@CrossOrigin(origins = {"*"})
-
+@RequestMapping("/sales-details")
 public class SalesDetailsControlller {
 
     @Autowired
-    SalesDetailsService salesDetailsService;
+    private SalesDetailsService salesDetailsService;
 
-    // ----------METHOD LIST ALL SALES--------------
-    // LINK FOR DEVELOPMENT :
-    // LINK FOR PRODUCTION :
-
-    @GetMapping("/listAll")
-    public ResponseEntity<?> listAll(){
-        Collection<SalesDetails> listAll = salesDetailsService.findAll();
-        if(listAll.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("ERROR: Sales details not found");
+    @GetMapping
+    public ResponseEntity<List<SalesDetails>> listAll() {
+        List<SalesDetails> list = salesDetailsService.findAll();
+        if (list.isEmpty()) {
+            return ResponseEntity.noContent().build();
         }
-        return  ResponseEntity.ok(listAll);
+        return ResponseEntity.ok(list);
     }
 
-
-    // ----------METHOD SEARCH SALES DETAILS FOR ID--------------
-    // LINK FOR DEVELOPMENT:
-    // LINK FOR PRODUCTION:
-
-    @GetMapping("/buscar/{id}")
-    public ResponseEntity<?> getSaleById(@PathVariable Long id) {
-        try {
-            SalesDetails salesDetails = salesDetailsService.findById(id);
-            if (salesDetails == null) {
-                return ResponseEntity
-                        .status(404)
-                        .body("Detalle con ID: " + id + " no fue encontrada.");
-            }
-            return ResponseEntity.ok(salesDetails);
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(500)
-                    .body("Error al buscar el detalle de venta: " + e.getMessage());
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        SalesDetails detail = salesDetailsService.findById(id);
+        if (detail == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Detalle con ID " + id + " no encontrado."));
         }
+        return ResponseEntity.ok(detail);
     }
 
-
-    // ----------METHOD INSERT SALES DETAILS--------------
-    // LINK FOR DEVELOPMENT:
-    // LINK FOR PRODUCTION:
-
-    @PostMapping("/create")
-    public ResponseEntity<Map<String, Object>> insert(@RequestBody SalesDetails salesDetails) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            salesDetailsService.insert(salesDetails);
-            response.put("Datos detalle de venta: ", salesDetails);
-            response.put("message", "Detalle de venta creada correctamente.");
-            return ResponseEntity.status(HttpStatus.CREATED).body(response); // Status 201 Created
-        } catch (Exception e) {
-            response.put("error", "Error al crear detalle de venta: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response); // Status 500 Error
-        }
+    @PostMapping
+    public ResponseEntity<SalesDetails> create(@RequestBody SalesDetails salesDetails) {
+        salesDetailsService.insert(salesDetails);
+        return ResponseEntity.status(HttpStatus.CREATED).body(salesDetails);
     }
 
-    // ----------METHOD UPDATE SALES DETAILS--------------
-    // LINK FOR DEVELOPMENT:
-    // LINK FOR PRODUCTION:
-
-    @PutMapping("/update_details/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody SalesDetails newSalesDetails) {
-        Map<String, Object> response = new HashMap<>();
-        SalesDetails salesDetails = salesDetailsService.findById(id);
-        if (salesDetails != null) {
-
-            salesDetails.setCantidad(newSalesDetails.getCantidad());
-            salesDetails.setDescuento(newSalesDetails.getDescuento());
-            salesDetails.setPrecio(newSalesDetails.getPrecio());
-            // FK
-            salesDetails.setSales(newSalesDetails.getSales());
-
-            salesDetailsService.update(salesDetails);
-            response.put("Mensaje: ", "Detalle de venta actualizado");
-
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
-            response.put("Error: ", "No se encuentra detalle de venta con ID" + id);
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody SalesDetails newData) {
+        SalesDetails detail = salesDetailsService.findById(id);
+        if (detail == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Detalle con ID " + id + " no encontrado."));
         }
+        detail.setCantidad(newData.getCantidad());
+        detail.setDescuento(newData.getDescuento());
+        detail.setPrecio(newData.getPrecio());
+        detail.setSales(newData.getSales());
+        salesDetailsService.update(detail);
+        return ResponseEntity.ok(detail);
     }
-
 }

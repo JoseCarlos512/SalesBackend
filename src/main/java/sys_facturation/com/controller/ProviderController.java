@@ -1,72 +1,63 @@
 package sys_facturation.com.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import sys_facturation.com.entity.Provider;
 import sys_facturation.com.service.ProviderService;
 
+import java.util.List;
 
 @RestController
-@RequestMapping("/proveedores")
+@RequestMapping("/providers")
 public class ProviderController {
-    
-    @Autowired
-	private ProviderService providerService;
 
-    @GetMapping("/List")
-    public ResponseEntity<List<Provider>> ListProvider() {
-        List<Provider> proveedoresList = providerService.ListProvider();
-        return ResponseEntity.ok(proveedoresList);
+    @Autowired
+    private ProviderService providerService;
+
+    @GetMapping
+    public ResponseEntity<List<Provider>> listAll() {
+        List<Provider> list = providerService.ListProvider();
+        if (list.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(list);
     }
 
-    @GetMapping("/ById/{id}")
-    public ResponseEntity<Provider> ProviderById(@PathVariable Long id) {
-        Provider prov = providerService.ProviderById(id);
-        if (prov != null) {
-            return ResponseEntity.ok(prov);
-        } else {
+    @GetMapping("/{id}")
+    public ResponseEntity<Provider> getById(@PathVariable Long id) {
+        Provider provider = providerService.ProviderById(id);
+        if (provider == null) {
             return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok(provider);
     }
 
-    @PostMapping("/Register")
-    public ResponseEntity<Provider> RegisterProvider(@RequestBody Provider proveedor) {
-        providerService.RegisterProvider(proveedor);
-        return new ResponseEntity<>(proveedor, HttpStatus.CREATED);
+    @PostMapping
+    public ResponseEntity<Provider> create(@RequestBody Provider provider) {
+        Provider saved = providerService.RegisterProvider(provider);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
-    @PutMapping("/Edit/{id}")
-    public ResponseEntity<Provider> EditProvider(@PathVariable(value="id") Long id, @RequestBody Provider proveedorDetails) {
-        Provider proveedor = providerService.ProviderById(id);
-        if (proveedor == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @PutMapping("/{id}")
+    public ResponseEntity<Provider> update(@PathVariable Long id, @RequestBody Provider providerDetails) {
+        Provider provider = providerService.ProviderById(id);
+        if (provider == null) {
+            return ResponseEntity.notFound().build();
         }
-        proveedor.setContacto(proveedorDetails.getContacto());
-        // Aquí puedes agregar otros campos a actualizar
-        providerService.RegisterProvider(proveedor);
-        return new ResponseEntity<>(proveedor, HttpStatus.OK);
+        provider.setContacto(providerDetails.getContacto());
+        provider.setTelefono_contacto(providerDetails.getTelefono_contacto());
+        Provider updated = providerService.RegisterProvider(provider);
+        return ResponseEntity.ok(updated);
     }
 
-    @DeleteMapping("/eliminar/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable(value="id") Long id) {
-        Provider proveedor = providerService.ProviderById(id);
-        if (proveedor == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        if (providerService.ProviderById(id) == null) {
+            return ResponseEntity.notFound().build();
         }
         providerService.RemoveProvider(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 }
-

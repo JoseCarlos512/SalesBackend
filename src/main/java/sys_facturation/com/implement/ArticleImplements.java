@@ -2,35 +2,40 @@ package sys_facturation.com.implement;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sys_facturation.com.entity.Articles;
 import sys_facturation.com.repository.ArticleDao;
 import sys_facturation.com.service.ArticleService;
-import java.util.Collection;
+
+import java.util.List;
 
 @Service
 public class ArticleImplements implements ArticleService {
 
     @Autowired
-    ArticleDao articleRespository;
-
+    private ArticleDao articleDao;
 
     @Override
+    @Transactional
     public void insert(Articles articles) {
-        articleRespository.save(articles);
+        articleDao.save(articles);
     }
 
     @Override
+    @Transactional
     public void update(Articles articles) {
-        articleRespository.save(articles);
+        articleDao.save(articles);
     }
 
     @Override
-    public Articles findById(Long Id) {
-        return articleRespository.findById(Id).orElse(null);
+    @Transactional(readOnly = true)
+    public Articles findById(Long id) {
+        return articleDao.findById(id).orElse(null);
     }
 
     @Override
-    public Collection<Articles> findAll() {
-        return (Collection<Articles>) articleRespository.findAll();
+    @Transactional(readOnly = true)
+    public List<Articles> findAll() {
+        return articleDao.findAll();
     }
 }

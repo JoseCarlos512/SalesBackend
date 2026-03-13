@@ -1,7 +1,5 @@
 package sys_facturation.com.dto;
 
-import jakarta.persistence.Column;
-
 public class RolDTO {
     private Long id;
     private String nombre;

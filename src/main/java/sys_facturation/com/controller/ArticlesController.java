@@ -6,66 +6,55 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sys_facturation.com.entity.Articles;
 import sys_facturation.com.service.ArticleService;
-import java.util.Collection;
-import java.util.HashMap;
+
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/articles")
-@CrossOrigin(origins = {"*"})
-
 public class ArticlesController {
 
     @Autowired
-    ArticleService articleService;
+    private ArticleService articleService;
 
-    // --------------------- METHOD LIST --------------------------
-    // link: http://localhost:9696/api/articles/list-All
-
-    @RequestMapping("/list-All")
-    public ResponseEntity<?> listAll(){
-        Collection<Articles> listAll = articleService.findAll();
-        if(listAll.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("ERROR: Categories not found");
+    @GetMapping
+    public ResponseEntity<List<Articles>> listAll() {
+        List<Articles> list = articleService.findAll();
+        if (list.isEmpty()) {
+            return ResponseEntity.noContent().build();
         }
-        return  ResponseEntity.ok(listAll);
+        return ResponseEntity.ok(list);
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<Map<String, Object>> insert(@RequestBody Articles articles) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            articleService.insert(articles);
-            response.put("Articulo creado:", articles);
-            response.put("message", "Articulo creado correctamente.");
-            return ResponseEntity.status(HttpStatus.CREATED).body(response); // Status 201 Created
-        } catch (Exception e) {
-            response.put("error", "Error al crear categoria: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response); // Status 500 Error
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        Articles article = articleService.findById(id);
+        if (article == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Artículo con ID " + id + " no encontrado."));
         }
+        return ResponseEntity.ok(article);
     }
 
-    @PutMapping("/update_article/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Articles newArticles) {
-        Map<String, Object> response = new HashMap<>();
-        Articles articles = articleService.findById(id);
-        if (articles != null) {
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody Articles articles) {
+        articleService.insert(articles);
+        return ResponseEntity.status(HttpStatus.CREATED).body(articles);
+    }
 
-            articles.setNombre(newArticles.getNombre());
-            articles.setDescripcion(newArticles.getDescripcion());
-            articles.setCodigo(newArticles.getCodigo());
-            articles.setPrecio_venta(newArticles.getPrecio_venta());
-            articles.setUpdate_at(newArticles.getUpdate_at());
-
-            // FK
-            articles.setCategories(newArticles.getCategories());
-
-            articleService.update(articles);
-            response.put("Mensaje", "Articulo actualizado correctamente");
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
-            response.put("Error: ", "No se encuentra Articulo con el ID" +id);
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Articles newData) {
+        Articles article = articleService.findById(id);
+        if (article == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Artículo con ID " + id + " no encontrado."));
         }
+        article.setNombre(newData.getNombre());
+        article.setDescripcion(newData.getDescripcion());
+        article.setCodigo(newData.getCodigo());
+        article.setPrecio_venta(newData.getPrecio_venta());
+        article.setCategories(newData.getCategories());
+        articleService.update(article);
+        return ResponseEntity.ok(article);
     }
 }

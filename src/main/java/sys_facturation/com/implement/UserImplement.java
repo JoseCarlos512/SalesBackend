@@ -10,52 +10,55 @@ import sys_facturation.com.service.UserService;
 import sys_facturation.com.util.MapperUtils;
 
 import java.util.Collection;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class UserImplement implements UserService {
+
     @Autowired
-    UserDao userRepository;
+    private UserDao userRepository;
+
     @Override
+    @Transactional(readOnly = true)
     public Collection<UserDTO> findAll() {
-        return ((Collection<User>) userRepository.findAll()).stream()
+        return userRepository.findAll().stream()
                 .map(MapperUtils::toUserDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public UserDTO findById(Long Id) {
-        User user = userRepository.findById(Id).orElse(null);
-        return user != null ? MapperUtils.toUserDTO(user) : null;
+    @Transactional(readOnly = true)
+    public UserDTO findById(Long id) {
+        return userRepository.findById(id)
+                .map(MapperUtils::toUserDTO)
+                .orElse(null);
     }
 
     @Override
     @Transactional
     public UserDTO insert(User user) {
-        User saved = userRepository.save(user);
-        return MapperUtils.toUserDTO(saved);
+        return MapperUtils.toUserDTO(userRepository.save(user));
     }
 
     @Override
     @Transactional
     public UserDTO update(User user) {
-        User updated = userRepository.save(user);
-        return MapperUtils.toUserDTO(updated);
+        return MapperUtils.toUserDTO(userRepository.save(user));
     }
 
     @Override
     @Transactional
-    public boolean deleteById(Long Id) {
-        if (userRepository.existsById(Id)){
-            userRepository.deleteById(Id);
+    public boolean deleteById(Long id) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
             return true;
         }
         return false;
     }
 
     @Override
-    public boolean existsById(Long Id) {
-        return userRepository.existsById(Id);
+    @Transactional(readOnly = true)
+    public boolean existsById(Long id) {
+        return userRepository.existsById(id);
     }
 }

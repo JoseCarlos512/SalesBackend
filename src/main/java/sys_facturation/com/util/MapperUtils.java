@@ -11,18 +11,15 @@ public class MapperUtils {
 
     public static UserDTO toUserDTO(User user) {
         if (user == null) return null;
-
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
         dto.setUsuario(user.getUsuario());
-        dto.setPassword(user.getPassword());
         dto.setIdRol(user.getRol().getId().intValue());
         return dto;
     }
 
     public static RolDTO toRolDTO(Rol rol) {
         if (rol == null) return null;
-
         RolDTO dto = new RolDTO();
         dto.setId(rol.getId());
         dto.setNombre(rol.getNombre());
@@ -32,7 +29,6 @@ public class MapperUtils {
 
     public static IncomeDTO toIncomeDTO(Income income) {
         if (income == null) return null;
-
         IncomeDTO dto = new IncomeDTO();
         dto.setIdproveedor(income.getIdproveedor());
         dto.setIdusuario(income.getIdusuario());

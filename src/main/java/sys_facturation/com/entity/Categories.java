@@ -14,43 +14,45 @@ public class Categories implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @Column(nullable = false, length = 50)
     private String nombre;
 
-    @Column( length = 256)
+    @Column(length = 256)
     private String descripcion;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm")
-    @Column(nullable = false)
-    private LocalDateTime create_at = LocalDateTime.now(); // Fecha específica para este registro.
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime create_at;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     @Column(nullable = false)
-    private LocalDateTime update_at = LocalDateTime.now(); // Fecha específica para este registro.
+    private LocalDateTime update_at;
 
     @Column(nullable = false, length = 1)
     private int condicion = 1;
 
+    @PrePersist
+    protected void onCreate() {
+        create_at = LocalDateTime.now();
+        update_at = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        update_at = LocalDateTime.now();
+    }
+
     public Categories() {
     }
 
-    public Categories(Long id, String nombre, String descripcion, LocalDateTime create_at, LocalDateTime update_at, int condicion) {
-        this.Id = id;
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-        this.create_at = create_at;
-        this.update_at = update_at;
-        this.condicion = condicion;
-    }
-
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getNombre() {
@@ -73,16 +75,8 @@ public class Categories implements Serializable {
         return create_at;
     }
 
-    public void setCreate_at(LocalDateTime create_at) {
-        this.create_at = create_at;
-    }
-
     public LocalDateTime getUpdate_at() {
         return update_at;
-    }
-
-    public void setUpdate_at(LocalDateTime update_at) {
-        this.update_at = update_at;
     }
 
     public int getCondicion() {

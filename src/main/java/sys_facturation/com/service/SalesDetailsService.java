@@ -1,14 +1,11 @@
 package sys_facturation.com.service;
 
-
 import sys_facturation.com.entity.SalesDetails;
-import java.util.Collection;
+import java.util.List;
 
 public interface SalesDetailsService {
-
-    abstract void insert(SalesDetails salesDetails);
-    abstract void update(SalesDetails salesDetails);
-    abstract SalesDetails findById(Long Id);
-    Collection<SalesDetails> findAll();
-
+    void insert(SalesDetails salesDetails);
+    void update(SalesDetails salesDetails);
+    SalesDetails findById(Long id);
+    List<SalesDetails> findAll();
 }

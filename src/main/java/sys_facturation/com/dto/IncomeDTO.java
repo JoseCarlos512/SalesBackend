@@ -6,9 +6,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import sys_facturation.com.entity.Income;
 import sys_facturation.com.entity.IncomeDetail;
 
@@ -49,8 +46,6 @@ public class IncomeDTO {
         income.setTotal(this.total);
         income.setEstado(this.estado);
         income.setFechaHora(this.fechaHora);
-        income.setCreatedAt(this.createdAt != null ? this.createdAt : LocalDateTime.now());
-        income.setUpdatedAt(LocalDateTime.now());
 
         if (this.detalles != null) {
             List<IncomeDetail> detallesEntity = this.detalles.stream()

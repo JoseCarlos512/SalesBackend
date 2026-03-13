@@ -7,58 +7,57 @@ import org.springframework.web.bind.annotation.*;
 import sys_facturation.com.dto.RolDTO;
 import sys_facturation.com.entity.Rol;
 import sys_facturation.com.service.RolService;
+
 import java.util.Collection;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/roles")
 public class RolController {
 
     @Autowired
-    RolService rolService;
-    @GetMapping("/rol")
-    public ResponseEntity<?> List() {
+    private RolService rolService;
+
+    @GetMapping
+    public ResponseEntity<Collection<RolDTO>> listAll() {
         Collection<RolDTO> roles = rolService.findAll();
         if (roles.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("ERROR: Rol not found");
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(roles);
     }
-    @GetMapping("/rol/{id}")
-    public ResponseEntity<RolDTO> FindById(@PathVariable Long id) {
+
+    @GetMapping("/{id}")
+    public ResponseEntity<RolDTO> getById(@PathVariable Long id) {
         RolDTO rol = rolService.findById(id);
         if (rol == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
-
-        return new ResponseEntity<>(rol, HttpStatus.OK);
-    }
-    @PostMapping("/rol")
-    public ResponseEntity<RolDTO> Insert(@RequestBody Rol rol) {
-        if (rol == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        RolDTO createdRol = rolService.insert(rol);
-        return new ResponseEntity<>(createdRol, HttpStatus.CREATED);
+        return ResponseEntity.ok(rol);
     }
 
-    @PutMapping("/rol/{id}")
-    public ResponseEntity<RolDTO> Update(@PathVariable(value="id") Long id, @RequestBody Rol rol) {
-        if (rol == null || id == null || !id.equals(rol.getId())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        RolDTO updatedRol = rolService.update(rol);
-        if (updatedRol == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(updatedRol, HttpStatus.OK);
+    @PostMapping
+    public ResponseEntity<RolDTO> create(@RequestBody Rol rol) {
+        RolDTO created = rolService.insert(rol);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    @DeleteMapping("/rol/{id}")
-    public ResponseEntity<Void> Delete(@PathVariable(value="id") Long id) {
-        Boolean deleted = rolService.deleteById(id);
-        if (!deleted) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @PutMapping("/{id}")
+    public ResponseEntity<RolDTO> update(@PathVariable Long id, @RequestBody Rol rol) {
+        if (!id.equals(rol.getId())) {
+            return ResponseEntity.badRequest().build();
         }
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        RolDTO updated = rolService.update(rol);
+        if (updated == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        if (!rolService.deleteById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build();
     }
 }

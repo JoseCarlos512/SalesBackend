@@ -1,14 +1,11 @@
 package sys_facturation.com.service;
 
-import org.hibernate.sql.ast.tree.expression.Collation;
 import sys_facturation.com.entity.Categories;
-
-import java.util.Collection;
+import java.util.List;
 
 public interface CategoriesService {
-
-    abstract void insert(Categories categories);
-    abstract void update(Categories categories);
-    abstract Collection<Categories> findAll();
-    abstract Categories findById(Long Id);
+    void insert(Categories categories);
+    void update(Categories categories);
+    List<Categories> findAll();
+    Categories findById(Long id);
 }

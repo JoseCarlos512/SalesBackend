@@ -20,8 +20,8 @@ public class SalesDetails implements Serializable {
     @Column(name = "descuento", nullable = false, precision = 11, scale = 2)
     private BigDecimal descuento;
 
-    @OneToOne
-    @JoinColumn(nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "id_sale", nullable = false)
     Sales sales;
 
     public SalesDetails() {

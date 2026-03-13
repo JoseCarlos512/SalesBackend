@@ -8,9 +8,11 @@ import java.time.LocalDateTime;
 @Entity
 public class Sales implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "tipo_comprobante", nullable = false, length = 20)
     private String tipoComprobante;
@@ -33,33 +35,31 @@ public class Sales implements Serializable {
     @Column(name = "estado", nullable = false, length = 20)
     private String estado;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
     public Sales() {
     }
 
-    public Sales(Integer id, String tipoComprobante, String serieComprobante, String numComprobante, LocalDateTime fechaHora, BigDecimal impuesto, BigDecimal total, String estado, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = id;
-        this.tipoComprobante = tipoComprobante;
-        this.serieComprobante = serieComprobante;
-        this.numComprobante = numComprobante;
-        this.fechaHora = fechaHora;
-        this.impuesto = impuesto;
-        this.total = total;
-        this.estado = estado;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
-
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -123,15 +123,7 @@ public class Sales implements Serializable {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 }

@@ -14,7 +14,7 @@ public class Articles implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @Column(length = 100, nullable = false)
     private String nombre;
@@ -25,19 +25,19 @@ public class Articles implements Serializable {
     @Column(length = 50)
     private String codigo;
 
-    @Column(length = 50, nullable = false)
+    @Column(nullable = false)
     private Double precio_venta;
 
     @Column(length = 11)
     private int stock;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm")
-    @Column(nullable = false)
-    private LocalDateTime create_at = LocalDateTime.now(); // Fecha específica para este registro.
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime create_at;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     @Column(nullable = false)
-    private LocalDateTime update_at = LocalDateTime.now(); // Fecha específica para este registro.
+    private LocalDateTime update_at;
 
     @Column(nullable = false, length = 1)
     private int status_article = 1;
@@ -46,28 +46,26 @@ public class Articles implements Serializable {
     @JoinColumn(nullable = false, name = "id_categories")
     Categories categories;
 
+    @PrePersist
+    protected void onCreate() {
+        create_at = LocalDateTime.now();
+        update_at = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        update_at = LocalDateTime.now();
+    }
+
     public Articles() {
     }
 
-    public Articles(Long id, String nombre, String descripcion, String codigo, Double precio_venta, int stock, LocalDateTime create_at, LocalDateTime update_at, int status_article, Categories categories) {
-        this.Id = id;
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-        this.codigo = codigo;
-        this.precio_venta = precio_venta;
-        this.stock = stock;
-        this.create_at = create_at;
-        this.update_at = update_at;
-        this.status_article = status_article;
-        this.categories = categories;
-    }
-
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getNombre() {
@@ -114,16 +112,8 @@ public class Articles implements Serializable {
         return create_at;
     }
 
-    public void setCreate_at(LocalDateTime create_at) {
-        this.create_at = create_at;
-    }
-
     public LocalDateTime getUpdate_at() {
         return update_at;
-    }
-
-    public void setUpdate_at(LocalDateTime update_at) {
-        this.update_at = update_at;
     }
 
     public int getStatus_article() {

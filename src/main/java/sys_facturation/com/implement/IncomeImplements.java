@@ -1,36 +1,35 @@
 package sys_facturation.com.implement;
 
-import java.util.List;
-import java.util.Optional;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sys_facturation.com.dto.IncomeDTO;
 import sys_facturation.com.entity.Income;
-import sys_facturation.com.entity.IncomeDetail;
-import sys_facturation.com.entity.User;
 import sys_facturation.com.repository.IncomeDao;
 import sys_facturation.com.service.IncomeService;
 import sys_facturation.com.util.MapperUtils;
 
-@Repository
+import java.util.List;
+import java.util.Optional;
+
+@Service
 public class IncomeImplements implements IncomeService {
+
+    private static final Logger log = LoggerFactory.getLogger(IncomeImplements.class);
 
     @Autowired
     private IncomeDao incomeDao;
-    @PersistenceContext
-    private EntityManager em;
 
     @Override
+    @Transactional(readOnly = true)
     public List<Income> findAll() {
-        return em.createQuery("FROM Income", Income.class).getResultList();
+        return incomeDao.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Income> findById(Long id) {
         return incomeDao.findById(id);
     }
@@ -38,15 +37,14 @@ public class IncomeImplements implements IncomeService {
     @Override
     @Transactional
     public IncomeDTO save(Income income) {
-        System.out.println(">>>>> Fecha recibida: " + income.getFechaHora());
-        System.out.println(">>>>> ESTADO RECIBIDO: " + income.getEstado());
+        log.debug("Guardando ingreso: proveedor={}, estado={}", income.getIdproveedor(), income.getEstado());
         Income saved = incomeDao.save(income);
         return MapperUtils.toIncomeDTO(saved);
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
         incomeDao.deleteById(id);
     }
-
 }

@@ -3,16 +3,14 @@ package sys_facturation.com.dto;
 public class UserDTO {
     private Long id;
     private String usuario;
-    private String password;
     private int idRol;
 
     public UserDTO() {
     }
 
-    public UserDTO(Long id, String usuario, String password, int idRol) {
+    public UserDTO(Long id, String usuario, int idRol) {
         this.id = id;
         this.usuario = usuario;
-        this.password = password;
         this.idRol = idRol;
     }
 
@@ -30,14 +28,6 @@ public class UserDTO {
 
     public void setUsuario(String usuario) {
         this.usuario = usuario;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public int getIdRol() {

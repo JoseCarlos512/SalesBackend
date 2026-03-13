@@ -6,67 +6,52 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sys_facturation.com.entity.Categories;
 import sys_facturation.com.service.CategoriesService;
-import java.util.Collection;
-import java.util.HashMap;
+
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/categories")
-@CrossOrigin(origins = {"*"})
-
 public class CategoriesController {
 
     @Autowired
-    CategoriesService categoriesService;
+    private CategoriesService categoriesService;
 
-    // --------------------- METHOD LIST --------------------------
-    // link: http://localhost:9696/api/categories/list-All
-
-    @GetMapping("/list-All")
-    public ResponseEntity<?> listAll() {
-        Collection<Categories> listAll = categoriesService.findAll();
-        if (listAll.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("ERROR: Categories not found");
+    @GetMapping
+    public ResponseEntity<List<Categories>> listAll() {
+        List<Categories> list = categoriesService.findAll();
+        if (list.isEmpty()) {
+            return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(listAll);
+        return ResponseEntity.ok(list);
     }
 
-    // --------------------- METHOD CREATE CATEGORIES --------------------------
-    // link: http://localhost:9696/api/categories/create
-
-    @PostMapping("/create")
-    public ResponseEntity<Map<String, Object>> insert(@RequestBody Categories categories) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            categoriesService.insert(categories);
-            response.put("Categoria creada:", categories);
-            response.put("message", "Categoria creada correctamente.");
-            return ResponseEntity.status(HttpStatus.CREATED).body(response); // Status 201 Created
-        } catch (Exception e) {
-            response.put("error", "Error al crear Categoria: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response); // Status 500 Error
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        Categories category = categoriesService.findById(id);
+        if (category == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Categoría con ID " + id + " no encontrada."));
         }
-    }
-    // --------------------- METHOD UPDATE CATEGORIES --------------------------
-    // link: http://localhost:9696/api/categories/update_article/
-
-    @PutMapping("/update_article/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Categories newCategories) {
-        Map<String, Object> response = new HashMap<>();
-        Categories categories = categoriesService.findById(id);
-        if (categories != null) {
-
-            categories.setNombre(newCategories.getNombre());
-            categories.setDescripcion(newCategories.getDescripcion());
-            categories.setUpdate_at(newCategories.getUpdate_at());
-
-            categoriesService.update(categories);
-            response.put("Mensaje: ", "Categiria actualizada correctamente");
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
-            response.put("Error: ", "No se encuentra la categoria con el ID: " +id);
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok(category);
     }
 
+    @PostMapping
+    public ResponseEntity<Categories> create(@RequestBody Categories categories) {
+        categoriesService.insert(categories);
+        return ResponseEntity.status(HttpStatus.CREATED).body(categories);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Categories newData) {
+        Categories category = categoriesService.findById(id);
+        if (category == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Categoría con ID " + id + " no encontrada."));
+        }
+        category.setNombre(newData.getNombre());
+        category.setDescripcion(newData.getDescripcion());
+        categoriesService.update(category);
+        return ResponseEntity.ok(category);
+    }
 }
