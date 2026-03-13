@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sys_facturation.com.entity.Sales;
+import sys_facturation.com.entity.SalesDetails;
 import sys_facturation.com.service.SalesService;
 
 import java.util.List;
@@ -38,6 +39,12 @@ public class SalesController {
 
     @PostMapping
     public ResponseEntity<Sales> create(@RequestBody Sales sales) {
+        // Ensure each detail has the back-reference set before cascade save
+        if (sales.getDetalles() != null) {
+            for (SalesDetails detail : sales.getDetalles()) {
+                detail.setSales(sales);
+            }
+        }
         salesService.insert(sales);
         return ResponseEntity.status(HttpStatus.CREATED).body(sales);
     }
@@ -55,6 +62,7 @@ public class SalesController {
         sale.setImpuesto(newData.getImpuesto());
         sale.setTotal(newData.getTotal());
         sale.setEstado(newData.getEstado());
+        sale.setPerson(newData.getPerson());
         salesService.update(sale);
         return ResponseEntity.ok(sale);
     }
